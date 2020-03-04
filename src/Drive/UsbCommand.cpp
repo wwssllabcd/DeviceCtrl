@@ -4,7 +4,6 @@
 #include "./UsbCommand.h"
 
 #include "UsbDrive.h"
-#include "UsbCmdSet\UsbCmdStruct.h"
 #include "Utility/EricException.h"
 #include "Utility/Utility.h"
 
@@ -56,38 +55,7 @@ void UsbCommand::sendCommand(eu8* cdb, eu8* buffer, int Length, eu8 direction, e
 		
 		estring msg = _ET("Usb Command Fail:") + su.arrayToHexString(cdb, 12);
 		msg += su.strFormat(_ET(".len=%X, Dir=%X, errorCode = %X"), Length, direction, errorCode) + _ET(", desc=") + desc;
-		throw THROW_MYEXCEPTION(USBC_SCSI_CMD_FAIL, msg);
+		THROW_MYEXCEPTION(USBC_SCSI_CMD_FAIL, msg);
 	}
-}
-
-void UsbCommand::write10(eu32 lba, eu16 secCnt, eu8* buffer) {
-	UsbCmdStruct cmd;
-	cmd = cmd.write10(lba, secCnt);
-	sendCommand(cmd.cdb, buffer, cmd.length, cmd.direction, cmd.description);
-}
-
-void UsbCommand::read10(eu32 lba, eu16 secCnt, eu8* buffer)  {
-	UsbCmdStruct cmd;
-	cmd = cmd.read10(lba, secCnt);
-	sendCommand(cmd.cdb, buffer, cmd.length, cmd.direction, cmd.description);
-}
-
-void UsbCommand::testUnitReady() {
-	eu8 buffer[1];
-	UsbCmdStruct cmd;
-	cmd = cmd.testUnitReady();
-	sendCommand(cmd.cdb, buffer, cmd.length, cmd.direction, cmd.description);
-}
-
-void UsbCommand::inquiry(eu8* buffer)  {
-	UsbCmdStruct cmd;
-	cmd = cmd.inquiry();
-	sendCommand(cmd.cdb, buffer, cmd.length, cmd.direction, cmd.description);
-}
-
-void UsbCommand::readCapacity(eu8* buffer)  {
-	UsbCmdStruct cmd;
-	cmd = cmd.readCapacity();
-	sendCommand(cmd.cdb, buffer, cmd.length, cmd.direction, cmd.description);
 }
 
