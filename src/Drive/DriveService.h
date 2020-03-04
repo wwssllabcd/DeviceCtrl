@@ -8,8 +8,11 @@
 
 using namespace std;
 
-#define DRIVE_SERVICE_TYPE (1)
-#define FILTER_NAME _ET("")
+#define SCAN_BY_DRIVE_LETTER           (0)
+#define SCAN_BY_GUID_DISK_CLASS        (1)
+#define SCAN_MODE                      (SCAN_BY_GUID_DISK_CLASS)
+
+#define FILTER_NAME _ET("jmic")
 
 class DriveService
 {
@@ -17,10 +20,10 @@ public:
 	//----------------------- function ---------------------------------
 	~DriveService(void);
 	Drive getIdelDevice();
-	Drive getIdelDeviceByName(const estring&  deviceName);
+	Drive getIdelDeviceByName(estring_cr deviceName);
 	Drive getIdelDeviceById(int testId);
 
-	static DriveService* getInstance(int deviceType=DRIVE_SERVICE_TYPE, const estring& filterName = FILTER_NAME);
+	static DriveService* getInstance(int deviceType = SCAN_MODE, estring_cr filterName = FILTER_NAME);
 
 	void releaseDevice(HANDLE driveAddr);
 
@@ -32,12 +35,12 @@ public:
     vector<estring>& getDeviceNameList(vector<estring>& colls);
 	
 private :
-	DriveService(int deviceType, estring filterName);
+	DriveService(int deviceType, estring_cr filterName);
 	DriveService(const DriveService&);
 	vector<Drive> _driveCollection;
 	static DriveService* _instance;
 	void _checkDrive(const Drive& d);
-    void exception(int num, const echar* str);
+    void exception(int num, echar_sp str);
 };
 
 #ifdef EXPORT_DLL

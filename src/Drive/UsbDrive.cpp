@@ -29,7 +29,7 @@ bool UsbDrive::SendSptiCommand(HANDLE drive_handle, eu8* cdb, eu8* iobuf, DWORD 
 	eu32 length = 0, bytes_returned = 0;
 	eu32 input_buffer_length, output_buffer_length;
 
-	Sptwb = (SCSI_PASS_THROUGH_WITH_BUFFERS *)malloc(sizeof(SCSI_PASS_THROUGH_WITH_BUFFERS) + 1024 * 64);
+	Sptwb = (SCSI_PASS_THROUGH_WITH_BUFFERS *)malloc(sizeof(SCSI_PASS_THROUGH_WITH_BUFFERS) + _128K);
 	if (Sptwb == NULL) {
 		return false;
 	}
@@ -119,11 +119,9 @@ bool UsbDrive::sendCommand(HANDLE hUsb, PUCHAR cdb, PUCHAR DataBuffer, eu32  Dat
 	return  SendSptiCommand(hUsb, cdb, DataBuffer, DataTransferLen, flags, 30);
 }
 
-bool UsbDrive::GetDeviceViaInterface(GUID* pGuid, eu32 instance, echar* const DevicePath) {
-	SP_DEVICE_INTERFACE_DATA ifdata;
+bool UsbDrive::GetDeviceViaInterface(GUID* pGuid, eu32 instance, echar_p DevicePath) {
 	DWORD ReqLen;
 	HDEVINFO info;
-	PSP_INTERFACE_DEVICE_DETAIL_DATA ifDetail;
 
 	bool blReturn = false;
 	info = SetupDiGetClassDevs(pGuid, NULL, NULL, DIGCF_PRESENT | DIGCF_INTERFACEDEVICE);
@@ -131,7 +129,8 @@ bool UsbDrive::GetDeviceViaInterface(GUID* pGuid, eu32 instance, echar* const De
 		return blReturn;
 	}
 
-	// Get interface data for the requested instance                                                 
+	// Get interface data for the requested instance  
+	SP_DEVICE_INTERFACE_DATA ifdata;
 	ifdata.cbSize = sizeof(ifdata);
 	if (!SetupDiEnumDeviceInterfaces(info, NULL, pGuid, instance, &ifdata)) {
 		SetupDiDestroyDeviceInfoList(info);
@@ -140,7 +139,7 @@ bool UsbDrive::GetDeviceViaInterface(GUID* pGuid, eu32 instance, echar* const De
 
 	// Get size of symbolic link name                                                                
 	SetupDiGetDeviceInterfaceDetail(info, &ifdata, NULL, 0, &ReqLen, NULL);
-	ifDetail = (PSP_INTERFACE_DEVICE_DETAIL_DATA)(malloc(ReqLen));
+	PSP_INTERFACE_DEVICE_DETAIL_DATA ifDetail = (PSP_INTERFACE_DEVICE_DETAIL_DATA)(malloc(ReqLen));
 
 	if (ifDetail == NULL) {
 		SetupDiDestroyDeviceInfoList(info);

@@ -16,17 +16,17 @@ DriveService*   DriveService::_instance = 0;// initialize pointer
 HANDLE hMutex;
 
 
-DriveService::DriveService(int deviceType, estring filterName)
-{
+DriveService::DriveService(int deviceType, estring_cr filterName){
 	UsbDrive objDrive;
 	vector<pair<HANDLE, estring>> colls;
-
-	if(deviceType == 3) {
+	if (deviceType == SCAN_BY_DRIVE_LETTER) {
+		objDrive.scanByDriveletter(deviceType, colls);
+	} else if(deviceType == SCAN_BY_GUID_DISK_CLASS){
 		objDrive.UsbStorGetDiskHandle(colls, filterName);
 	} else {
-		objDrive.scanByDriveletter(deviceType, colls);
+		exception(0, _ET("no scan type"));
 	}
-
+	
 	for(size_t i = 0; i < colls.size(); i++) {
 		pair<HANDLE, estring> d = colls[i];
 		Drive dr;
@@ -38,7 +38,7 @@ DriveService::DriveService(int deviceType, estring filterName)
 	}
 }
 
-DriveService* DriveService::getInstance(int deviceType, const estring& filterName) {
+DriveService* DriveService::getInstance(int deviceType, estring_cr filterName) {
 	hMutex = CreateMutex(NULL, true, _ET("DriveService"));
 	WaitForSingleObject(hMutex, INFINITE);
 	if(_instance == 0) {
@@ -52,7 +52,7 @@ DriveService::~DriveService(void)
 {
 }
 
-void DriveService::exception(int num, const echar* str){
+void DriveService::exception(int num, echar_sp str){
     THROW_MYEXCEPTION(num, str);
 }
 
@@ -73,7 +73,7 @@ Drive DriveService::getIdelDevice() {
 	return d;
 }
 
-Drive DriveService::getIdelDeviceByName(const estring& deviceName) {
+Drive DriveService::getIdelDeviceByName(estring_cr deviceName) {
 	Drive d;
 	vector<Drive>::iterator iter;
 	WaitForSingleObject(hMutex, INFINITE);

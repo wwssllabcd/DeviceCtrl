@@ -27,8 +27,18 @@ public:
 	static ScsiSpecailFun posSendCmd;
 	
 
-	static void static_sendCommand(eu8* cdb, eu8* buffer, int Length, eu8 direction);
-	void sendCommand(eu8* cdb, eu8* buffer, int Length, eu8 direction, estring desc) ;
+	static void static_sendCommand(eu8* cdb, eu8* buffer, eu32 Length, eu8 direction);
+	void sendCommand(eu8* cdb, eu8* buffer, eu32 Length, eu8 direction, estring_cr desc) ;
+
+	////UFI
+	//void inquiry(eu8* buffer) ;
+	//void readCapacity(eu8* buffer) ;
+	//void testUnitReady() ;
+
+	//void write10(eu32 lba, eu16 secCnt, eu8* buffer) ;
+	//void read10(eu32 lba, eu16 secCnt, eu8* buffer) ;
+
+
 
     Utility m_u;
 

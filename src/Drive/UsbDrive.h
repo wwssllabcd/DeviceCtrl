@@ -25,6 +25,6 @@ namespace EricCore {
 	private:
 		bool SendSptiCommand(HANDLE drive_handle, eu8* cdb, eu8* iobuf, DWORD buflen, eu8 flags, eu16 timeout);
 		
-		bool GetDeviceViaInterface(GUID* pGuid, eu32 instance, echar* const DevicePath);
+		bool GetDeviceViaInterface(GUID* pGuid, eu32 instance, echar_p DevicePath);
 	};
 };

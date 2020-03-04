@@ -16,7 +16,7 @@ DeviceManger::~DeviceManger(void)
 void DeviceManger::loadDeviceColl(void) {
 
 	eu32 logicDevices = GetLogicalDrives();
-	estring deviceName = _T("A:");
+	estring deviceName = _ET("A:");
 
 	for(int i = 2; i < this->maxDeviceCnt; i++) {
 		if(checkDeviceExist(logicDevices, (eu32)(1 << i)) == false) {
@@ -31,7 +31,7 @@ void DeviceManger::loadDeviceColl(void) {
 		}
 
 		//Open the Drive's handle
-		estring accessSymbol = _T("\\\\.\\");
+		estring accessSymbol = _ET("\\\\.\\");
 		accessSymbol += deviceName;
 		HANDLE  drvhandle = CreateFile(accessSymbol.c_str(),
 			GENERIC_WRITE | GENERIC_READ,

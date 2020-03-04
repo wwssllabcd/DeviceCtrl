@@ -4,31 +4,28 @@
 #include "./UsbCommand.h"
 
 #include "UsbDrive.h"
+//#include "UsbCmdSet\UsbCmdStruct.h"
 #include "Utility/EricException.h"
 #include "Utility/Utility.h"
-
-
 
 ScsiSpecailFun UsbCommand::specialCmdHandle = 0;
 ScsiSpecailFun UsbCommand::posSendCmd = 0;
 ErrorHandleFun UsbCommand::errHandleFun = 0;
 
 UsbCommand::UsbCommand(HANDLE deviceHandle)
-	:m_dvrHandle(deviceHandle)
-{
+	:m_dvrHandle(deviceHandle){
 }
 
-UsbCommand::~UsbCommand(void)
-{
+UsbCommand::~UsbCommand(void){
 }
 
-void UsbCommand::static_sendCommand(eu8* cdb, eu8* buffer, int Length, eu8 direction) {
+void UsbCommand::static_sendCommand(eu8* cdb, eu8* buffer, eu32 Length, eu8 direction) {
 	if(UsbCommand::specialCmdHandle) {
 		bool res = UsbCommand::specialCmdHandle(cdb, buffer, Length, direction);
 	}
 }
 
-void UsbCommand::sendCommand(eu8* cdb, eu8* buffer, int Length, eu8 direction, estring desc) {
+void UsbCommand::sendCommand(eu8* cdb, eu8* buffer, eu32 Length, eu8 direction, estring_cr desc) {
 	UsbDrive usbDrive;
     Utility su;
 	bool status = false;
