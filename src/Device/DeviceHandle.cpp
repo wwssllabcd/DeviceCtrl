@@ -20,14 +20,15 @@ vector<estring> DeviceHandle::get_device_path() {
 
 vector<DeviceInfo> DeviceHandle::get_device_handle_colls(vector<estring> devicePaths) {
     vector<DeviceInfo> colls;
-    for (eu32 i = 0; i < devicePaths.size(); i++) {
-        HANDLE handle = m_diu.open_device(devicePaths[i]);
+
+    for (auto devicePath : devicePaths) {
+        HANDLE handle = m_diu.open_device(devicePath);
         if (handle == INVALID_HANDLE_VALUE) {
             continue;
         }
 
         DeviceInfo obj;
-        obj.devicePath = devicePaths[i];
+        obj.devicePath = devicePath;
         obj.handle = handle;
         obj.busType = m_diu.get_bus_type(handle);
 
@@ -38,12 +39,12 @@ vector<DeviceInfo> DeviceHandle::get_device_handle_colls(vector<estring> deviceP
 
 vector<DeviceInfo> DeviceHandle::filter(vector<DeviceInfo>& inputColls, CheckFun checkFun) {
     vector<DeviceInfo> resultColls;
-    for (eu32 i = 0; i < inputColls.size(); i++) {
-        if (checkFun(inputColls[i]) == false) {
-            m_diu.close_device(inputColls[i].handle);
+    for (auto item : inputColls) {
+        if (checkFun(item) == false) {
+            m_diu.close_device(item.handle);
             continue;
         }
-        resultColls.push_back(inputColls[i]);
+        resultColls.push_back(item);
     }
     return resultColls;
 }
