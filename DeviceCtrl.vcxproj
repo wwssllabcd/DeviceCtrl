@@ -35,20 +35,20 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -91,7 +91,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>.\src;..\EricCoreCpp\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\src;..\EricCoreCpp\src;..\FTL_LIB\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -158,18 +158,37 @@
     <ClInclude Include="src\Device\HeadBase.h" />
     <ClInclude Include="src\Device\DeviceHandle.h" />
     <ClInclude Include="src\Device\DeviceIoUtility.h" />
+    <ClInclude Include="src\ScsiUtility\DefineScsi.h" />
+    <ClInclude Include="src\ScsiUtility\FakeScsi\SimpleDisk.h" />
+    <ClInclude Include="src\ScsiUtility\ScsiCmd.h" />
+    <ClInclude Include="src\ScsiUtility\ScsiFun.h" />
+    <ClInclude Include="src\ScsiUtility\ScsiIf.h" />
+    <ClInclude Include="src\ScsiUtility\ScsiIoIf.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Device\DeviceHandle.cpp" />
     <ClCompile Include="src\Device\DeviceIoUtility.cpp" />
+    <ClCompile Include="src\ScsiUtility\FakeScsi\SimpleDisk.cpp" />
+    <ClCompile Include="src\ScsiUtility\ScsiCmd.cpp" />
+    <ClCompile Include="src\ScsiUtility\ScsiFun.cpp" />
+    <ClCompile Include="src\ScsiUtility\ScsiIf.cpp" />
+    <ClCompile Include="src\ScsiUtility\ScsiIoIf.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EricCoreCpp\EricCoreCpp.vcxproj">
+      <Project>{3c796ff3-e764-4ba4-9101-b3b7ea47d1c1}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\FTL_LIB\FTL_LIB.vcxproj">
+      <Project>{251e082a-285e-47ba-bf40-2bca7c513ed1}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
