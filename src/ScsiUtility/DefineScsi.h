@@ -3,7 +3,7 @@
 //#define _ENABLE_PHYSICAL_DEVICE_
 #define FAKE_HANDLE                     (0xFFFF1234)
 
-#define ENABLE_4k_SEC_LEN
+//#define ENABLE_4k_SEC_LEN
 #ifdef ENABLE_4k_SEC_LEN
 #define BYTE_PER_SECTOR                 (_4K)
 #define MAX_SEC_LEN                     (0x10)   // (80h * 512)/4k = 0x10

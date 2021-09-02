@@ -3,9 +3,6 @@
 #include "../DefineScsi.h"
 #include "Utility/Utility.h"
 
-extern "C" {
-#include "ftl.h"
-}
 
 SimpleDisk::SimpleDisk(void) {
 
@@ -15,33 +12,25 @@ SimpleDisk::~SimpleDisk(void) {
 }
 
 void SimpleDisk::init_disk() {
-	ftl_init();
+
 }
 
 void SimpleDisk::lba_read(eu32 lba, eu32 secCnt, eu8_p buffer) {
-
-	ftl_lba_read(lba, secCnt, buffer);
-
-	//memcpy(buffer, m_fakeDevice, SECTOR_TO_BYTE(secCnt));
+	memcpy(buffer, m_fakeDevice, SECTOR_TO_BYTE(secCnt));
 }
 
 void SimpleDisk::lba_write(eu32 lba, eu32 secCnt, eu8_p buffer) {
-	ftl_lba_write(lba, secCnt, buffer);
-
-	//memcpy(buffer, m_fakeDevice, SECTOR_TO_BYTE(secCnt));
+	memcpy(buffer, m_fakeDevice, SECTOR_TO_BYTE(secCnt));
 }
 
 void SimpleDisk::get_ufi_capacity(eu8_p buffer) {
-	ftl_get_capacity(buffer);
+	eu32 cap = 0xF0000000;
 
-
-	//eu32 cap = 0xF0000000;
-
-	////MSB format
-	//buffer[0] = ((cap >> 0x18) & 0xFF);
-	//buffer[1] = ((cap >> 0x10) & 0xFF);
-	//buffer[2] = ((cap >> 0x08) & 0xFF);
-	//buffer[3] = ((cap >> 0x00) & 0xFF);
+	//MSB format
+	buffer[0] = ((cap >> 0x18) & 0xFF);
+	buffer[1] = ((cap >> 0x10) & 0xFF);
+	buffer[2] = ((cap >> 0x08) & 0xFF);
+	buffer[3] = ((cap >> 0x00) & 0xFF);
 }
 
 void SimpleDisk::get_inquiry(eu8_p buffer) {

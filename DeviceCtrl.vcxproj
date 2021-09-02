@@ -91,7 +91,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>.\src;..\EricCoreCpp\src;..\FTL_LIB\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\src;..\EricCoreCpp\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -106,7 +106,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\EricCoreCpp\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\src;..\EricCoreCpp\src</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -185,9 +185,6 @@
   <ItemGroup>
     <ProjectReference Include="..\EricCoreCpp\EricCoreCpp.vcxproj">
       <Project>{3c796ff3-e764-4ba4-9101-b3b7ea47d1c1}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\FTL_LIB\FTL_LIB.vcxproj">
-      <Project>{251e082a-285e-47ba-bf40-2bca7c513ed1}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
