@@ -4,6 +4,9 @@
 #include "Utility/Utility.h"
 
 
+#define _ENABLE_FTL_DISK_
+
+
 SimpleDisk::SimpleDisk(void) {
 
 }
@@ -11,8 +14,30 @@ SimpleDisk::SimpleDisk(void) {
 SimpleDisk::~SimpleDisk(void) {
 }
 
-void SimpleDisk::init_disk() {
+#ifdef _ENABLE_FTL_DISK_
+extern "C" {
 
+}
+
+void SimpleDisk::init_disk() {
+	
+}
+
+void SimpleDisk::lba_read(eu32 lba, eu32 secCnt, eu8_p buffer) {
+	
+}
+
+void SimpleDisk::lba_write(eu32 lba, eu32 secCnt, eu8_p buffer) {
+	
+}
+
+void SimpleDisk::get_ufi_capacity(eu8_p buffer) {
+	
+}
+
+#else
+
+void SimpleDisk::init_disk() {
 }
 
 void SimpleDisk::lba_read(eu32 lba, eu32 secCnt, eu8_p buffer) {
@@ -25,13 +50,13 @@ void SimpleDisk::lba_write(eu32 lba, eu32 secCnt, eu8_p buffer) {
 
 void SimpleDisk::get_ufi_capacity(eu8_p buffer) {
 	eu32 cap = 0xF0000000;
-
 	//MSB format
 	buffer[0] = ((cap >> 0x18) & 0xFF);
 	buffer[1] = ((cap >> 0x10) & 0xFF);
 	buffer[2] = ((cap >> 0x08) & 0xFF);
 	buffer[3] = ((cap >> 0x00) & 0xFF);
 }
+#endif
 
 void SimpleDisk::get_inquiry(eu8_p buffer) {
 	buffer[0] = 0x46;
