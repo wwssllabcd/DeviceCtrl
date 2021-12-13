@@ -3,6 +3,8 @@
 #include "DefineScsi.h"
 
 #include "Utility/Singleton.h"
+#include "Utility/Utility.h"
+
 #include "winioctl.h"          //BusTypeUsb
 
 ScsiFun::ScsiFun()
@@ -15,9 +17,9 @@ ScsiFun::~ScsiFun() {
 #ifdef _ENABLE_PHYSICAL_DEVICE_
 
 
-vector<DeviceInfo> ScsiFun::scan_all_device() {
+vector<DeviceInfo> ScsiFun::scan_all_device(ScanType scanType) {
     DeviceHandle deviceHandle;
-    vector<DeviceInfo> deviceInfo = deviceHandle.get_device_handle_colls(deviceHandle.get_device_path());
+    vector<DeviceInfo> deviceInfo = deviceHandle.get_device_handle_colls(deviceHandle.get_device_path(scanType));
     return deviceInfo;
 }
 
@@ -29,8 +31,8 @@ vector<DeviceInfo> ScsiFun::filter_device(vector<DeviceInfo> deviceInfo, CheckFu
     return deviceInfo;
 }
 
-vector<DeviceInfo> ScsiFun::scan_device(CheckFun filterFun) {
-    vector<DeviceInfo> deviceInfo = filter_device(scan_all_device(), filterFun);
+vector<DeviceInfo> ScsiFun::scan_device(ScanType scanType, CheckFun filterFun) {
+    vector<DeviceInfo> deviceInfo = filter_device(scan_all_device(scanType), filterFun);
     return deviceInfo;
 }
 #else
@@ -66,6 +68,18 @@ void ScsiFun::setup_singleton(vector<DeviceInfo> deviceInfos) {
         ScsiIf obj(item.handle, item.devicePath);
         s->push_back(obj);
     }
+}
+
+estring ScsiFun::get_device_info_string(vector<DeviceInfo> deviceInfos) {
+    estring msg;
+    Utility u;
+    for (auto item : deviceInfos) {
+        msg += _ET("path = ") + item.devicePath + CRLF;
+        msg += _ET("bus type = ") + u.toHexString(item.busType) + CRLF;
+        msg += _ET("handle = ") + u.toHexString((eu32)item.handle) + CRLF;
+        msg += _ET("description = ") + item.description + CRLF;
+    }
+    return msg;
 }
 
 ScsiIf ScsiFun::get_form_singleton(eu32 num) {

@@ -12,12 +12,20 @@ ScsiIoIf::~ScsiIoIf() {
 }
 
 
-#ifdef _ENABLE_PHYSICAL_DEVICE
+#ifdef _ENABLE_PHYSICAL_DEVICE_
 
 #include "Device/DeviceIoUtility.h"
 eu8 ScsiIoIf::send_scsi_cmd_base(HANDLE handle, BYTE cdb[16], ULONG dataXferLen, BYTE direction, eu8_p buffer) {
     DeviceIoUtility diu;
+#ifdef ENABL_SCSI_PT_WITH_BUF
+    return diu.scsi_pass_through_with_buffer(handle, cdb, buffer, dataXferLen, direction, SCSI_CMD_TIMEOUT);
+#else
     return diu.scsi_pass_through_direct(handle, cdb, buffer, dataXferLen, direction, SCSI_CMD_TIMEOUT);
+#endif
+}
+
+void ScsiIoIf::init_disk() {
+    
 }
 
 #else
@@ -32,7 +40,7 @@ eu8 ScsiIoIf::send_scsi_cmd_base(HANDLE handle, BYTE cdb[16], ULONG dataXferLen,
 }
 
 void ScsiIoIf::init_disk() {
-    return m_sd.init_disk();
+    m_sd.init_disk();
 }
 
 #endif

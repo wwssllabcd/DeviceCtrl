@@ -1,16 +1,17 @@
 #pragma once
 
 #include "HeadBase.h"
-
+#include "DeviceIoUtility.h"
 #include <windows.h>     //HANDLE
 #include <vector>
 
-#include "DeviceIoUtility.h"
-
-
-
 
 using namespace std;
+
+enum ScanType {
+    driveLetter = 0,
+    physicalDriver = 1,
+};
 
 typedef struct {
     estring devicePath;
@@ -32,7 +33,7 @@ public:
 
     
 
-    vector<estring> get_device_path();
+    vector<estring> get_device_path(ScanType scanType);
 
     vector<DeviceInfo> get_device_handle_colls(vector<estring> devicePaths);
     vector<DeviceInfo> filter(vector<DeviceInfo>& inputColls, CheckFun checkFun);

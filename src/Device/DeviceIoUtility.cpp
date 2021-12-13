@@ -11,9 +11,16 @@
 
 typedef struct {
     SCSI_PASS_THROUGH_DIRECT sptd;
-    //WORD filler;
-    BYTE sensebytes[SPT_SENSE_LENGTH];
+    ULONG filler;
+    BYTE senseBuf[SPT_SENSE_LENGTH];
 } SPTDWB;
+
+typedef struct _SCSI_PASS_THROUGH_WITH_BUFFERS {
+    SCSI_PASS_THROUGH	Spt;
+    ULONG				Filler;
+    BYTE				SenseBuf[32];
+    UCHAR				DataBuf[1];
+} SCSI_PASS_THROUGH_WITH_BUFFERS, * PSCSI_PASS_THROUGH_WITH_BUFFERS;
 
 
 DeviceIoUtility::DeviceIoUtility() {
@@ -59,29 +66,24 @@ eu32 DeviceIoUtility::get_bus_type(HANDLE handle) {
     return DevDesc.BusType;
 }
 
-BYTE DeviceIoUtility::scsi_pass_through_direct(HANDLE handle, BYTE cdb[16], BYTE* buffer, ULONG dataXferLen, BYTE direction, WORD timeout) {
-    SPTDWB _scsi = { 0 };
+BYTE DeviceIoUtility::scsi_pass_through_direct(HANDLE handle, BYTE* cdb, BYTE* buffer, ULONG dataXferLen, BYTE direction, WORD timeout) {
+    SPTDWB _scsi;
     SPTDWB* scsi = &_scsi;
+    ZeroMemory(scsi, sizeof(SPTDWB));
+    
+    scsi->sptd.CdbLength = CDB_LEN;
+    memcpy(scsi->sptd.Cdb, cdb, CDB_LEN);
 
     scsi->sptd.Length = sizeof(SCSI_PASS_THROUGH_DIRECT);
-    scsi->sptd.SenseInfoOffset = offsetof(SPTDWB, sensebytes);
-    scsi->sptd.SenseInfoLength = SPT_SENSE_LENGTH;
-
-    scsi->sptd.ScsiStatus = 0;
-    scsi->sptd.PathId = 0;
-    scsi->sptd.TargetId = 0;
-    scsi->sptd.Lun = 0;
-
-    scsi->sptd.DataBuffer = buffer; //buffer ptr
-    scsi->sptd.DataTransferLength = dataXferLen;
-
+    scsi->sptd.SenseInfoOffset = offsetof(SPTDWB, senseBuf);
+    scsi->sptd.SenseInfoLength = sizeof(scsi->senseBuf);
     scsi->sptd.TimeOutValue = timeout;
+
     scsi->sptd.DataIn = direction;
+    scsi->sptd.DataTransferLength = dataXferLen;
+    scsi->sptd.DataBuffer = buffer; //buffer ptr
 
-    scsi->sptd.CdbLength = 16;
-    memcpy(scsi->sptd.Cdb, cdb, 16);
-
-    DWORD bytesReturned = 0; // data returned
+    DWORD retVal = 0;
     DWORD objSize = sizeof(SPTDWB);
     BOOL status = DeviceIoControl(handle,  // device to be queried
         IOCTL_SCSI_PASS_THROUGH_DIRECT,  // operation to perform
@@ -89,7 +91,7 @@ BYTE DeviceIoUtility::scsi_pass_through_direct(HANDLE handle, BYTE cdb[16], BYTE
         objSize,                         // in buffer size 
         scsi,                            // out buffer 
         objSize,                         // out buffer size
-        &bytesReturned,                  // # bytes returned
+        &retVal,                  // # bytes returned
         (LPOVERLAPPED)NULL);             // synchronous I/O
 
     BYTE ScsiStatus = scsi->sptd.ScsiStatus;
@@ -98,6 +100,58 @@ BYTE DeviceIoUtility::scsi_pass_through_direct(HANDLE handle, BYTE cdb[16], BYTE
     }
     return ScsiStatus;
 }
+
+BYTE DeviceIoUtility::scsi_pass_through_with_buffer(HANDLE handle, BYTE* cdb, BYTE* buffer, ULONG dataXferLen, BYTE direction, WORD timeout) {
+    ULONG packageLen = sizeof(SCSI_PASS_THROUGH) + sizeof(ULONG) + 32 + (dataXferLen);
+    PSCSI_PASS_THROUGH_WITH_BUFFERS pSptwb = (PSCSI_PASS_THROUGH_WITH_BUFFERS)malloc(packageLen);
+    ZeroMemory(pSptwb, packageLen);
+
+    pSptwb->Spt.CdbLength = CDB_LEN;
+    memcpy(pSptwb->Spt.Cdb, cdb, CDB_LEN);
+
+    pSptwb->Spt.Length = sizeof(SCSI_PASS_THROUGH);
+    pSptwb->Spt.SenseInfoOffset = offsetof(SCSI_PASS_THROUGH_WITH_BUFFERS, SenseBuf);
+    pSptwb->Spt.SenseInfoLength = sizeof(pSptwb->SenseBuf);
+    pSptwb->Spt.TimeOutValue = timeout;
+    
+    pSptwb->Spt.DataIn = direction;
+    pSptwb->Spt.DataTransferLength = dataXferLen;
+    pSptwb->Spt.DataBufferOffset = offsetof(SCSI_PASS_THROUGH_WITH_BUFFERS, DataBuf);
+
+    if (direction == SCSI_IOCTL_DATA_OUT) {
+        memcpy(pSptwb->DataBuf, buffer, dataXferLen);
+    }
+
+    if (direction == SCSI_IOCTL_DATA_UNSPECIFIED) {
+        pSptwb->Spt.DataTransferLength = 0;
+    }
+
+    DWORD retVal = 0;
+    BOOL status = DeviceIoControl(handle,
+        IOCTL_SCSI_PASS_THROUGH,
+        pSptwb,
+        packageLen,
+        pSptwb,
+        packageLen,
+        (LPDWORD)retVal,
+        NULL);
+
+    if (!status || pSptwb->Spt.ScsiStatus) {
+        goto free;
+    }
+
+    if (pSptwb->Spt.DataIn == SCSI_IOCTL_DATA_IN) {
+        if (dataXferLen > 0) {
+            memcpy(buffer, pSptwb->DataBuf, dataXferLen);
+        }
+    }
+    
+        
+free:
+    free(pSptwb);
+    return status | pSptwb->Spt.ScsiStatus;
+}
+
 
 vector<estring> DeviceIoUtility::gen_string_physical_drive() {
     vector<estring> devicePaths;

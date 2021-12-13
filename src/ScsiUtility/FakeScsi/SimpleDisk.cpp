@@ -4,7 +4,7 @@
 #include "Utility/Utility.h"
 
 
-#define _ENABLE_FTL_DISK_
+//#define _ENABLE_FAKE_DISK_FTL_
 
 
 SimpleDisk::SimpleDisk(void) {
@@ -14,25 +14,25 @@ SimpleDisk::SimpleDisk(void) {
 SimpleDisk::~SimpleDisk(void) {
 }
 
-#ifdef _ENABLE_FTL_DISK_
+#ifdef _ENABLE_FAKE_DISK_FTL_
 extern "C" {
-
+#include "ftl.h"
 }
 
 void SimpleDisk::init_disk() {
-	
+	ftl_init();
 }
 
 void SimpleDisk::lba_read(eu32 lba, eu32 secCnt, eu8_p buffer) {
-	
+	ftl_lba_read(lba, secCnt, buffer);
 }
 
 void SimpleDisk::lba_write(eu32 lba, eu32 secCnt, eu8_p buffer) {
-	
+	ftl_lba_write(lba, secCnt, buffer);
 }
 
 void SimpleDisk::get_ufi_capacity(eu8_p buffer) {
-	
+	ftl_get_capacity(buffer);
 }
 
 #else
@@ -59,10 +59,10 @@ void SimpleDisk::get_ufi_capacity(eu8_p buffer) {
 #endif
 
 void SimpleDisk::get_inquiry(eu8_p buffer) {
-	buffer[0] = 0x46;
-	buffer[1] = 0x41;
-	buffer[2] = 0x4B;
-	buffer[3] = 0x45;
+	buffer[0] = 'F';
+	buffer[1] = 'A';
+	buffer[2] = 'K';
+	buffer[3] = 'E';
 }
 
 eu8 SimpleDisk::send_scsi_cmd(eu8 cdb[16], eu32 dataXferLen, eu8 direction, eu8_p buffer) {
@@ -92,7 +92,5 @@ eu8 SimpleDisk::send_scsi_cmd(eu8 cdb[16], eu32 dataXferLen, eu8 direction, eu8_
 		get_inquiry(buffer);
 		return 0;
 	}
-
-
 	return 0;
 }

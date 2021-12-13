@@ -3,7 +3,7 @@
 #include "DeviceHandle.h"
 #include <fileapi.h>        //CreateFile
 #include <handleapi.h>      //INVALID_HANDLE_VALUE
-
+#include "ScsiUtility/DefineScsi.h"
 
 
 DeviceHandle::DeviceHandle(void) {
@@ -13,9 +13,12 @@ DeviceHandle::~DeviceHandle()
 {
 }
 
-vector<estring> DeviceHandle::get_device_path() {
-    //return m_diu.gen_string_physical_drive();
-    return m_diu.gen_string_drive_letter();
+vector<estring> DeviceHandle::get_device_path(ScanType scanType) {
+    if (scanType == ScanType::physicalDriver) {
+        return m_diu.gen_string_physical_drive();
+    } else {
+        return m_diu.gen_string_drive_letter();
+    }
 }
 
 vector<DeviceInfo> DeviceHandle::get_device_handle_colls(vector<estring> devicePaths) {

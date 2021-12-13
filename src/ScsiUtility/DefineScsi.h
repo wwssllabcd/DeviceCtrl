@@ -1,9 +1,13 @@
 #pragma once
 
-//#define _ENABLE_PHYSICAL_DEVICE_
+#define _ENABLE_PHYSICAL_DEVICE_
 #define FAKE_HANDLE                     (0xFFFF1234)
 
+//#define ENABL_SCSI_PT_WITH_BUF
 //#define ENABLE_4k_SEC_LEN
+
+
+//---------------------------
 #ifdef ENABLE_4k_SEC_LEN
 #define BYTE_PER_SECTOR                 (_4K)
 #define MAX_SEC_LEN                     (0x10)   // (80h * 512)/4k = 0x10
