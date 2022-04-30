@@ -16,10 +16,10 @@ typedef struct {
 } SPTDWB;
 
 typedef struct _SCSI_PASS_THROUGH_WITH_BUFFERS {
-    SCSI_PASS_THROUGH	Spt;
-    ULONG				Filler;
-    BYTE				SenseBuf[32];
-    UCHAR				DataBuf[1];
+    SCSI_PASS_THROUGH	spt;
+    ULONG				filler;
+    BYTE				senseBuf[SPT_SENSE_LENGTH];
+    UCHAR				dataBuf[1];
 } SCSI_PASS_THROUGH_WITH_BUFFERS, * PSCSI_PASS_THROUGH_WITH_BUFFERS;
 
 
@@ -106,24 +106,24 @@ BYTE DeviceIoUtility::scsi_pass_through_with_buffer(HANDLE handle, BYTE* cdb, BY
     PSCSI_PASS_THROUGH_WITH_BUFFERS pSptwb = (PSCSI_PASS_THROUGH_WITH_BUFFERS)malloc(packageLen);
     ZeroMemory(pSptwb, packageLen);
 
-    pSptwb->Spt.CdbLength = CDB_LEN;
-    memcpy(pSptwb->Spt.Cdb, cdb, CDB_LEN);
+    pSptwb->spt.CdbLength = CDB_LEN;
+    memcpy(pSptwb->spt.Cdb, cdb, CDB_LEN);
 
-    pSptwb->Spt.Length = sizeof(SCSI_PASS_THROUGH);
-    pSptwb->Spt.SenseInfoOffset = offsetof(SCSI_PASS_THROUGH_WITH_BUFFERS, SenseBuf);
-    pSptwb->Spt.SenseInfoLength = sizeof(pSptwb->SenseBuf);
-    pSptwb->Spt.TimeOutValue = timeout;
+    pSptwb->spt.Length = sizeof(SCSI_PASS_THROUGH);
+    pSptwb->spt.SenseInfoOffset = offsetof(SCSI_PASS_THROUGH_WITH_BUFFERS, senseBuf);
+    pSptwb->spt.SenseInfoLength = sizeof(pSptwb->senseBuf);
+    pSptwb->spt.TimeOutValue = timeout;
     
-    pSptwb->Spt.DataIn = direction;
-    pSptwb->Spt.DataTransferLength = dataXferLen;
-    pSptwb->Spt.DataBufferOffset = offsetof(SCSI_PASS_THROUGH_WITH_BUFFERS, DataBuf);
+    pSptwb->spt.DataIn = direction;
+    pSptwb->spt.DataTransferLength = dataXferLen;
+    pSptwb->spt.DataBufferOffset = offsetof(SCSI_PASS_THROUGH_WITH_BUFFERS, dataBuf);
 
     if (direction == SCSI_IOCTL_DATA_OUT) {
-        memcpy(pSptwb->DataBuf, buffer, dataXferLen);
+        memcpy(pSptwb->dataBuf, buffer, dataXferLen);
     }
 
     if (direction == SCSI_IOCTL_DATA_UNSPECIFIED) {
-        pSptwb->Spt.DataTransferLength = 0;
+        pSptwb->spt.DataTransferLength = 0;
     }
 
     DWORD retVal = 0;
@@ -133,23 +133,23 @@ BYTE DeviceIoUtility::scsi_pass_through_with_buffer(HANDLE handle, BYTE* cdb, BY
         packageLen,
         pSptwb,
         packageLen,
-        (LPDWORD)retVal,
+        &retVal,
         NULL);
 
-    if (!status || pSptwb->Spt.ScsiStatus) {
+    if (!status || pSptwb->spt.ScsiStatus) {
         goto free;
     }
 
-    if (pSptwb->Spt.DataIn == SCSI_IOCTL_DATA_IN) {
+    if (pSptwb->spt.DataIn == SCSI_IOCTL_DATA_IN) {
         if (dataXferLen > 0) {
-            memcpy(buffer, pSptwb->DataBuf, dataXferLen);
+            memcpy(buffer, pSptwb->dataBuf, dataXferLen);
         }
     }
     
         
 free:
     free(pSptwb);
-    return status | pSptwb->Spt.ScsiStatus;
+    return status | pSptwb->spt.ScsiStatus;
 }
 
 

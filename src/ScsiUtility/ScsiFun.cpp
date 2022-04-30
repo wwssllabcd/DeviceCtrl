@@ -7,6 +7,8 @@
 
 #include "winioctl.h"          //BusTypeUsb
 
+using namespace EricCore;
+
 ScsiFun::ScsiFun()
 {
 }
@@ -36,7 +38,7 @@ vector<DeviceInfo> ScsiFun::scan_device(ScanType scanType, CheckFun filterFun) {
     return deviceInfo;
 }
 #else
-vector<DeviceInfo> ScsiFun::scan_device(CheckFun filterFun) {
+vector<DeviceInfo> ScsiFun::scan_device(ScanType scanType, CheckFun filterFun) {
     vector<DeviceInfo> deviceInfo;
     DeviceInfo di;
 
@@ -65,7 +67,7 @@ void ScsiFun::setup_singleton(vector<DeviceInfo> deviceInfos) {
     s->clear();
 
     for (auto item : deviceInfos) {
-        ScsiIf obj(item.handle, item.devicePath);
+        ScsiIf obj(item.handle, item.devicePath, item.description);
         s->push_back(obj);
     }
 }
@@ -74,10 +76,10 @@ estring ScsiFun::get_device_info_string(vector<DeviceInfo> deviceInfos) {
     estring msg;
     Utility u;
     for (auto item : deviceInfos) {
-        msg += _ET("path = ") + item.devicePath + CRLF;
-        msg += _ET("bus type = ") + u.toHexString(item.busType) + CRLF;
-        msg += _ET("handle = ") + u.toHexString((eu32)item.handle) + CRLF;
-        msg += _ET("description = ") + item.description + CRLF;
+        msg += _ET("path = ") + item.devicePath + ECRLF;
+        msg += _ET("bus type = ") + u.toHexString(item.busType) + ECRLF;
+        msg += _ET("handle = ") + u.toHexString((eu32)item.handle) + ECRLF;
+        msg += _ET("description = ") + item.description + ECRLF;
     }
     return msg;
 }
@@ -100,14 +102,14 @@ void ScsiFun::release() {
     s->release();
 }
 
-vector<estring> ScsiFun::get_device_name() {
+vector<estring> ScsiFun::get_device_description() {
     Singleton<ScsiIf>* s = Singleton<ScsiIf>::get_instance();
 
     vector<estring> colls;
     eu32 cnt = s->size();
     for (eu32 i = 0; i < cnt; i++) {
         ScsiIf obj = s->get_item(i);
-        colls.push_back(obj.m_deviceName);
+        colls.push_back(obj.m_deviceName + _ET(" -- ") + obj.m_description);
     }
 
     return colls;

@@ -13,13 +13,14 @@ using namespace std;
 class ScsiIf
 {
 public:
-    ScsiIf(HANDLE handle, estring deviceName);
+    ScsiIf(HANDLE handle, estring deviceName, estring description);
     ScsiIf();
  
     ~ScsiIf(void);
 
     HANDLE m_handle;
     estring m_deviceName;
+    estring m_description;
 
     
     //base function

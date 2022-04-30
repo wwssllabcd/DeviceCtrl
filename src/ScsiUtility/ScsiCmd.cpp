@@ -112,7 +112,7 @@ ScsiCmd ScsiCmd::read_10(eu32 lba, eu16 secCnt) {
 	cmd.cdb[7] = (secCnt >> 0x08) & 0xFF;
 	cmd.cdb[8] = (secCnt >> 0x00) & 0xFF;
 	
-    cmd.length = SECTOR_TO_BYTE(secCnt);
+    cmd.length = SEC_TO_BYTE(secCnt);
     cmd.direction = ScsiIoDir::DATA_IN;
     cmd.description = _ET("SCSI: Read(10)");
 	return cmd;
@@ -128,7 +128,7 @@ ScsiCmd ScsiCmd::write_10(eu32 lba, eu16 secCnt) {
 	cmd.cdb[7] = (secCnt >> 0x08) & 0xFF;
 	cmd.cdb[8] = (secCnt >> 0x00) & 0xFF;
 	
-	cmd.length = SECTOR_TO_BYTE(secCnt);
+	cmd.length = SEC_TO_BYTE(secCnt);
     cmd.direction = ScsiIoDir::DATA_OUT;
     cmd.description = _ET("SCSI: Write(10)");
 

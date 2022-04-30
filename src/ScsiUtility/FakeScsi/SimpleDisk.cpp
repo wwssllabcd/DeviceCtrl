@@ -5,7 +5,7 @@
 
 
 //#define _ENABLE_FAKE_DISK_FTL_
-
+using namespace EricCore;
 
 SimpleDisk::SimpleDisk(void) {
 
@@ -41,11 +41,11 @@ void SimpleDisk::init_disk() {
 }
 
 void SimpleDisk::lba_read(eu32 lba, eu32 secCnt, eu8_p buffer) {
-	memcpy(buffer, m_fakeDevice, SECTOR_TO_BYTE(secCnt));
+	memcpy(buffer, m_fakeDevice, SEC_TO_BYTE(secCnt));
 }
 
 void SimpleDisk::lba_write(eu32 lba, eu32 secCnt, eu8_p buffer) {
-	memcpy(buffer, m_fakeDevice, SECTOR_TO_BYTE(secCnt));
+	memcpy(buffer, m_fakeDevice, SEC_TO_BYTE(secCnt));
 }
 
 void SimpleDisk::get_ufi_capacity(eu8_p buffer) {

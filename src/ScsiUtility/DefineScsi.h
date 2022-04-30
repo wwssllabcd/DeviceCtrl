@@ -9,15 +9,15 @@
 
 //---------------------------
 #ifdef ENABLE_4k_SEC_LEN
-#define BYTE_PER_SECTOR                 (_4K)
+#define BYTE_PER_SEC                    (_4K)
 #define MAX_SEC_LEN                     (0x10)   // (80h * 512)/4k = 0x10
 #else
-#define BYTE_PER_SECTOR                 (512)
+#define BYTE_PER_SEC                    (512)
 #define MAX_SEC_LEN                     (0x80)
 #endif
 
 //---------------------------
-#define SECTOR_TO_BYTE(SEC)             ((SEC) * BYTE_PER_SECTOR)
+#define SEC_TO_BYTE(SEC)                ((SEC) * BYTE_PER_SEC)
 
 //UFI cmd
 #define UFI_OP_TEST_UNIT_READY          (0x00)

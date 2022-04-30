@@ -6,18 +6,9 @@
 
 #include <vector>
 
-#ifdef _ENABLE_PHYSICAL_DEVICE_
 #include "../Device/DeviceHandle.h"
-#else
 
-typedef struct {
-    estring devicePath;
-    HANDLE handle;
-    eu32 busType;
-    estring description;
-}DeviceInfo;
-typedef bool(*CheckFun)(DeviceInfo&);
-#endif
+
 
 
 class ScsiFun
@@ -33,7 +24,7 @@ public:
     
     void setup_singleton(vector<DeviceInfo> deviceInfos);
     ScsiIf get_form_singleton(eu32 num);
-    vector<estring> get_device_name();
+    vector<estring> get_device_description();
     void release();
 
     bool is_usb_bus_type(DeviceInfo& deviceInfo);

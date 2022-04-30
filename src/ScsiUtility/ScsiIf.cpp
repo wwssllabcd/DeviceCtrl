@@ -4,9 +4,10 @@
 #include "winioctl.h" //STORAGE_BUS_TYPE
 
 
-ScsiIf::ScsiIf(HANDLE handle, estring deviceName)
+ScsiIf::ScsiIf(HANDLE handle, estring deviceName, estring description)
     :m_handle(handle)
-    ,m_deviceName(deviceName)
+    , m_deviceName(deviceName)
+    , m_description(description)
 {
 }
 
