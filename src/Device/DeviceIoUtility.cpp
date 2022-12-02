@@ -102,6 +102,11 @@ BYTE DeviceIoUtility::scsi_pass_through_direct(HANDLE handle, BYTE* cdb, BYTE* b
 }
 
 BYTE DeviceIoUtility::scsi_pass_through_with_buffer(HANDLE handle, BYTE* cdb, BYTE* buffer, ULONG dataXferLen, BYTE direction, WORD timeout) {
+
+    if (dataXferLen >= _64K) {
+        throw exception("dataXferLen over 64k");
+    }
+
     ULONG packageLen = sizeof(SCSI_PASS_THROUGH) + sizeof(ULONG) + 32 + (dataXferLen);
     PSCSI_PASS_THROUGH_WITH_BUFFERS pSptwb = (PSCSI_PASS_THROUGH_WITH_BUFFERS)malloc(packageLen);
     ZeroMemory(pSptwb, packageLen);
