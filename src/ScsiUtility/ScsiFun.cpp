@@ -38,6 +38,7 @@ vector<DeviceInfo> ScsiFun::scan_device(ScanType scanType, CheckFun filterFun) {
     return deviceInfo;
 }
 #else
+#define FAKE_HANDLE                     (0xFFFF1234)
 vector<DeviceInfo> ScsiFun::scan_device(ScanType scanType, CheckFun filterFun) {
     vector<DeviceInfo> deviceInfo;
     DeviceInfo di;

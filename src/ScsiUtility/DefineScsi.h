@@ -1,7 +1,7 @@
 #pragma once
 
 #define _ENABLE_PHYSICAL_DEVICE_
-#define FAKE_HANDLE                     (0xFFFF1234)
+
 
 //#define ENABL_SCSI_PT_WITH_BUF
 //#define ENABLE_4k_SEC_LEN
